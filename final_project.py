@@ -239,11 +239,14 @@ current_options_list = list()
 inventory = list()
 
 def enterRoom(room_name):
+    global current_options_list
+    global current
     current_options_list = list()
     current = room_name
     room_obj = rooms[current]
-    print(f'You find yourself standing in the {current}.')
-    print()
+    
+    print(f'You find yourself standing in the {current}./n')
+    
     for desc in room_obj['description']:
         print(desc)
 
@@ -262,83 +265,83 @@ def enterRoom(room_name):
     # ensure base options always come last
     current_options_list = current_options_list + base_options
 
+    # normalize list by lowercasing all items
+    current_options_list = [item.lower() for item in current_options_list]
     print()
+    # display all valid options for the user
     for idx, option in enumerate(current_options_list):
         print(f'{idx + 1}) {option}')
+        
     
 def show_inventory():
-    print(inventory)
+    global inventory
+    if len(inventory) == 0:
+        print('Inventory Is Empty')
+    else:
+        for idx, item in enumerate(inventory):
+            print(f'{idx + 1}) {item}')
 
-def library():
-    enterRoom('Library')
-
-
-def greatHall():
-    enterRoom('Great Hall')
+def check_map(current_room):
+    print('\nYou check your map. \n')
+    print(f'Current Room: {current_room}')
+    for direction, room in rooms[current_room]['directions'].items():
+        if 'hidden' not in room or room['hidden'] != True:
+            print(f'{direction}: {room['name']}')
 
 
 # current room for display and tracking purposes
 
 def main():
-    greatHall()
-    # while True:
-    #     print(f'You find yourself standing in the {current}')
-    #     # initialize a list for dynamic purposes
-    #     options = list()
-    #     # base direction commands based on the keys in the current room
-    #     for direction in rooms[current].keys():
-    #         options.append(f'go {direction}')
+    # initialize in the Great Hall
+    enterRoom('Great Hall')
 
-    #     # concatenate direction options and base_options
-    #     options = options + base_options
+    while True:
+        global current_options_list
+        global current
+        command = input('\nWhat will you do next?: ')
 
-    #     # display all valid options for the user
-    #     command = input(f'What will you do next? {options}: ')
+        # if command is not in the valid options list for the room, print invalid and give a new input prompt
+        if command.lower() not in current_options_list:
+            print('\n!!!Invalid command!!!')
+            continue
 
-    #     # lowercase the command for simplicity and user's sake
-    #     if command.lower() == 'exit':
-    #         print('Do not feel shame. Greater heroes than you have failed. Perhaps the next hero will be ... more.', end='\n\n')
-    #         # end the loop
-    #         break
+        # lowercase the command for simplicity and user's sake
+        if command.lower() == 'exit':
+            print('Do not feel shame. Greater heroes than you have failed. Perhaps the next hero will be ... more.', end='\n\n')
+            # end the loop
+            break
+        
+        # display inventory
+        if command.lower() == 'inventory':
+            show_inventory()
+            continue
 
-    #     # lets the user check what the adjacent rooms are
-    #     if command.lower() == 'check map':
-    #         print('You check your map. The following rooms are adjacent to you: ', end='\n\n')
-    #         for direction, value in rooms[current].items():
-    #             print(f'{direction}: {value}')
-    #         print('\n')
-    #         continue
+        # lets the user check what the current and adjacent rooms are
+        if command.lower() == 'check map':
+            check_map(current)
+            continue
 
+        if command.lower() == 'rest':
+            print('You look tired. Rest your weary head for a moment.')
+            print('The world is dark, but here it is warm. If only for a moment.')
+            continue
 
-    #     if command.lower() == 'search':
-    #         print("Searching the room, you don't find what you are here for. Perhaps the programmer should sleep less.", end='\n\n')
-    #         continue
+        # if the input doesn't match earlier commands, split on the space
+        separated = command.split(' ')
 
-    #     if command.lower() == 'rest':
-    #         # TODO: player recovers health after resting. Player gets 1 rest per playthrough
-    #         print('You look tired. Rest your weary head for a moment. The world is dark, but here it is warm. If only for a moment.', end='\n\n')
-    #         continue
+        # change current room, using lower() to normalize the input to the rooms keys
+        room_name = rooms[current]['directions'][separated[1].lower()]['name']
+        # alert the user, change rooms, then restart the loop
+        print('\nMoving to a new room ...\n')
+        enterRoom(room_name)
+        
 
-    #     # if the input doesn't match earlier commands, split on the space
-    #     separated = command.split(' ')
-
-    #     # check that the format of input matches 'go <direction>' format and that the direction
-    #     # exists on the current room. If either reason is invalid, tell the user
-    #     if len(separated) != 2 or separated[0].lower() != 'go' or not separated[1].lower() in rooms[current].keys():
-    #         print('Invalid command', end='\n\n')
-    #         continue
-
-    #     # change current room, using lower() to normalize the input to the rooms keys
-    #     current = rooms[current][separated[1].lower()]
-    #     # alert the user, then restart the loop
-    #     print('Moving to a new room ...', end='\n\n')
-
-    #     # if player enters the villain's lair, they win the game
-    #     if current == "Villain's Lair":
-    #         # TODO: implement checks to ensure the player has collected all necessary items to win the battle
-    #         # if they have all items, give them the room description
-    #         # otherwise give them the failure description
-    #         # end the program upon victory
-    #         break
+        # if player enters the villain's lair, they win the game
+        if current == "Villain's Lair":
+            # TODO: implement checks to ensure the player has collected all necessary items to win the battle
+            # if they have all items, give them the room description
+            # otherwise give them the failure description
+            # end the program upon victory
+            break
 
 main()
