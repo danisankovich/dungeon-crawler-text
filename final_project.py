@@ -22,11 +22,12 @@ rooms = {
             'investigation': [
                 'Closer inspection reveals the sword to be made of metal, not stone.',
                 'Power rings from its blade',
-                'Pick up the sword? Y/N'
             ],
             'consequence': [
+                'You take the sword from the statue\'s grasp. You can feel its power.',
                 'Sword of the Morning added to your inventory.',
             ],
+            'found': False,
             'hidden': True # hidden means something has to be done before more detail is revealed
         },
         'options': [
@@ -52,20 +53,22 @@ rooms = {
             'north': { 'name': 'Study', 'hidden': False },
         },
         'description': [
-            'Ancient tomes line the shelves along the walls.',
             'The Door to the North leads to the study',
             'The Door to the East leads to the Great Hall'
         ],
         'item': {
             'name': 'Tome of Forgotten Magiks',
             'script': [
+                'Ancient tomes line the shelves along the walls.',
+            ],
+            'investigation': [
                 'In the bookshelves you find the Tome of Forgotten Magiks.',
-                'The text within teaches you the mighty lightning spells of legend.',
-                'Pick up the tome? Y/N'
             ],
             'consequence': [
+                'The text within teaches you the mighty lightning spells of legend.',
                 'Tome of Forgotten Magiks added to your inventory.',
             ],
+            'found': False,
             'hidden': True
         },
         'options': [
@@ -96,7 +99,8 @@ rooms = {
             'consequence_alternative': [
                 'You eat the Dragonlord\'s meal.',
                 'It\'s disappointingly bland.'
-            ]
+            ],
+            'found': False,
         },
         'options': [
             'Take Shield',
@@ -123,6 +127,7 @@ rooms = {
                 'Potion of Cunning added to your inventory.'
             ],
             'hidden': True,
+            'found': False,
             'post_script': True
         },
         'options': [
@@ -152,6 +157,7 @@ rooms = {
                 'Your soul is trapped within the ring until the Dragonlord decides to free you from this fate.',
                 'GAME OVER'
             ],
+            'found': False,
             'post_script': True
         }
     },
@@ -185,6 +191,7 @@ rooms = {
                 'Only a fragment is left behind. You hope it will be enough for the task that awaits.',
                 'Fragment of Wonder added to your inventory.'
             ],
+            'found': False,
         },
         'options': [
             'Take Orb', 'Destroy Orb'
@@ -214,6 +221,7 @@ rooms = {
                 'It gives you purpose, and single-minded focus to tackle the challenge that lies in your future.',
                 'Forgotten Letter added to your inventory.'
             ],
+            'found': False,
             'hidden': True
         }
     }
@@ -252,7 +260,7 @@ def enterRoom(room_name):
 
     print()
 
-    if 'item' in room_obj and 'found' not in room_obj['item']:
+    if 'item' in room_obj and room_obj['item']['found'] == False:
         for line in room_obj['item']['script']:
             print(line)
     
@@ -275,6 +283,7 @@ def enterRoom(room_name):
     
 def show_inventory():
     global inventory
+    print()
     if len(inventory) == 0:
         print('Inventory Is Empty')
     else:
@@ -287,6 +296,48 @@ def check_map(current_room):
     for direction, room in rooms[current_room]['directions'].items():
         if 'hidden' not in room or room['hidden'] != True:
             print(f'{direction}: {room['name']}')
+
+def search_statue():
+    print()
+    item = rooms['Great Hall']['item']
+    if item['found'] == True:
+        print('The statue\'s hand is empty. You have already found the sword')
+        return
+    for line in item['investigation']:
+        print(line)
+    response = ''
+
+    while response.lower() not in ['y', 'n']:
+        response = input('\nPick up the sword? Y/N: ')
+    
+    if response.lower() == 'y':
+        for line in item['consequence']:
+            print(line)
+        item['found'] = True
+        inventory.append(item['name'])
+    if response.lower() == 'n':
+        print('You leave the sword where you found it')
+
+def search_bookshelves():
+    print()
+    item = rooms['Library']['item']
+    if item['found'] == True:
+        print('Now that the book is in your possession, you do not sense any other tomes worth mentioning.')
+        return
+    for line in item['investigation']:
+        print(line)
+    response = ''
+
+    while response.lower() not in ['y', 'n']:
+        response = input('\nPick up the book? Y/N: ')
+    
+    if response.lower() == 'y':
+        for line in item['consequence']:
+            print(line)
+        item['found'] = True
+        inventory.append(item['name'])
+    if response.lower() == 'n':
+        print('You leave the book where you found it')
 
 
 # current room for display and tracking purposes
@@ -324,6 +375,14 @@ def main():
         if command.lower() == 'rest':
             print('You look tired. Rest your weary head for a moment.')
             print('The world is dark, but here it is warm. If only for a moment.')
+            continue
+
+        if command.lower() == 'search statue':
+            search_statue()
+            continue
+        
+        if command.lower() == 'search bookshelves':
+            search_bookshelves()
             continue
 
         # if the input doesn't match earlier commands, split on the space
