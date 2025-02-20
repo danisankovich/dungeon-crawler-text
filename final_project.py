@@ -238,6 +238,8 @@ inventory = list()
 potion_drank = False
 orb_status = ''
 
+# function to change a players current room and update state as necessary
+# sets up available commands, descriptions, item details, etc.
 def enter_room(room_name):
     if room_name == 'Villain\'s Lair':
         final_stage()
@@ -251,7 +253,7 @@ def enter_room(room_name):
         current = room_name
         room_obj = rooms[current]
         
-        print(f'You find yourself standing in the {current}./n')
+        print(f'You find yourself standing in the {current}.\n')
         
         for desc in room_obj['description']:
             print(desc)
@@ -283,7 +285,7 @@ def enter_room(room_name):
         if room_name == 'Study' and 'Potion of Cunning' in inventory and potion_drank == False:
             drink_potion()
 
-
+# Function to display final text and determine win/loss based on the players inventory when they enter the villain's lair
 def final_stage():
     if len(inventory) < 6:
         script = [
@@ -323,7 +325,7 @@ def final_stage():
     
     sys.exit(0)
         
-    
+# display the players inventory
 def show_inventory():
     global inventory
     print()
@@ -333,6 +335,7 @@ def show_inventory():
         for idx, item in enumerate(inventory):
             print(f'{idx + 1}) {item}')
 
+# display current room and adjacent rooms to player
 def check_map(current_room):
     print('\nYou check your map. \n')
     print(f'Current Room: {current_room}')
@@ -340,6 +343,7 @@ def check_map(current_room):
         if room['hidden'] != True:
             print(f'{direction}: {room['name']}')
 
+# function for handling drinking of a specific potion in inventory to access the secret room
 def drink_potion():
     global potion_drank
     print('\nYou get the sense that you are missing something.')
@@ -352,6 +356,7 @@ def drink_potion():
     if response.lower() == 'y':
         print('\nYou drink some of the potion of cunning.'),
         print('\nThe hidden path to the Dragonlord\'s Chambers appears.')
+        # update state and global object
         potion_drank = True
         rooms['Study']['directions']['northeast']['hidden'] = False
         current_options_list.insert(0, 'go northeast')
@@ -359,6 +364,7 @@ def drink_potion():
         print('\nMaybe best to save it for now.')
         current_options_list.append('drink potion')
     
+    # show the options list again since it may have been updated
     print()
     for idx, option in enumerate(current_options_list):
         print(f'{idx + 1}) {option}')
@@ -372,7 +378,7 @@ def drink_potion():
 # Should be easier once you get them all written out
 # 
 # 
-# 
+# Comment them all
 # 
 # 
 # 
@@ -487,6 +493,9 @@ def take_shield():
     if response.lower() == 'n':
         print('You leave the shield where you found it')
 
+# a trap for unwary players, which can lead to a game over.
+# In the future, maybe implement a dice roll system to determine if they spot the trap
+# also in the future, maybe if they drank the potion, they can avoid the trap
 def inspect_ring():
     print()
     item = rooms['Study']['item']
@@ -502,10 +511,11 @@ def inspect_ring():
     if response.lower() == 'y':
         for line in item['consequence']:
             print(line)
-        return True
+        sys.exit(0)
     if response.lower() == 'n':
         print('You leave the ring where you found it')
 
+# Player can keep the Orb item, setting them to the "Evil" ending
 def take_orb():
     global orb_status
     print()
@@ -533,7 +543,7 @@ def take_orb():
     if response.lower() == 'n':
         print('You leave the orb where you found it')
 
-
+# player has option to destroy an item and take a piece of it, giving the, the "Good" ending
 def destroy_orb():
     global orb_status
     print()
@@ -561,21 +571,30 @@ def destroy_orb():
     if response.lower() == 'n':
         print('You leave the orb where you found it')
 
+# function for when a user surrenders the game
 def exit():
     print('\nDo not feel shame. Greater heroes than you have failed.')
     print('\nPerhaps the next hero will be ... more.')
     print('\nGAME OVER')
     sys.exit(0)
 
+# initialization function
 def main():
     rest_counter = 0
     meal_eaten = False
+
+    print('The Dragonlord has expanded his reign of terror.')
+    print('Brave hero, travel through his castle and seek out the legendary treasures he has stolen.')
+    print('Turn those 6 powerful artifacts against him and save the world.')
+    print('But be warned. Fail to collect the 6 artifacts, and you will surely fail.')
+
     # initialize in the Great Hall
     enter_room('Great Hall')
 
     while True:
         global current_options_list
         global current
+        # lowercase for input normalization
         command = input('\nWhat will you do next?: ').lower()
 
         # if command is not in the valid options list for the room, print invalid and give a new input prompt
@@ -594,6 +613,7 @@ def main():
         elif command == 'check map':
             check_map(current)
 
+        # a fun command to add some flavor to the game, with added penalty
         elif command == 'rest':
             rest_counter += 1
             if rest_counter >= 3:
@@ -606,6 +626,7 @@ def main():
             print('The world is dark, but here it is warm. If only for a moment.')
             
 
+        # START room-specific command functions: the various functions that can take place only in specific rooms
         elif command == 'search statue':
             search_statue()
         
@@ -628,9 +649,7 @@ def main():
             destroy_orb()
 
         elif command == 'inspect ring':
-            game_over = inspect_ring()
-            if game_over:
-                break
+            inspect_ring()
         
         elif command == 'eat meal':
             print()
@@ -643,6 +662,7 @@ def main():
         
         elif command == 'drink potion':
             drink_potion()
+        # END room-specific command functions
         
         else:
             # if the input doesn't match earlier commands, split on the space
