@@ -1,4 +1,5 @@
 # Dani Sankovich
+import sys
 
 rooms = {
     'Great Hall': {
@@ -6,6 +7,7 @@ rooms = {
             'west': { 'name': 'Library', 'hidden': False },
             'north': { 'name': 'Villain\'s Lair', 'hidden': False },
             'east': { 'name': 'Dining Room', 'hidden': False },
+            'south': {'name': 'exit', 'hidden': False}
         },
         'description': [
             'A grand staircase leads to the door to the Villain\'s Lair to the north.',
@@ -25,27 +27,13 @@ rooms = {
             ],
             'consequence': [
                 'You take the sword from the statue\'s grasp. You can feel its power.',
-                'Sword of the Morning added to your inventory.',
+                '\nSword of the Morning added to your inventory.',
             ],
             'found': False,
-            'hidden': True # hidden means something has to be done before more detail is revealed
         },
         'options': [
             'Search Statue'
         ]
-    },
-    'Villain\'s Lair': {
-        'directions': {
-            'south': { 'name': 'Great Hall', 'hidden': False },
-            'north': { 'name': 'Chambers', 'hidden': True },
-        },
-        'description': [
-            'The mighty Dragonlord stands before you.',
-            'He transforms into a mighty dragon and towers over you',
-            'You raise your hand and with a powerful chant, magic flows through you.',
-            'Lightning arcs from your fingertips, smiting the Dragonlord. You have saved the day!',
-            '!!!The End!!!'
-        ],
     },
     'Library': {
         'directions': {
@@ -66,10 +54,9 @@ rooms = {
             ],
             'consequence': [
                 'The text within teaches you the mighty lightning spells of legend.',
-                'Tome of Forgotten Magiks added to your inventory.',
+                '\nTome of Forgotten Magiks added to your inventory.',
             ],
             'found': False,
-            'hidden': True
         },
         'options': [
             'Search Bookshelves'
@@ -89,16 +76,17 @@ rooms = {
         'item': {
             'name': 'Shield of Dusk',
             'script': [
-                'The Shield of Dusk, capable of reflecting the strongest of magic sits above the fireplace.',
-                'You recognize its design from countless stories of legendary heroes and villains'
+                'A shield hangs above the fireplace.',
+            ],
+            'investigation': [
+                'Upon closer inspection, you recognize the shield from your history books.',
+                'It is the Shield of Dusk, capable of reflecting even the strongest of magic.',
+                'Countless heroes and villains of legend wielded it.'
             ],
             'consequence': [
                 'You remove the shield from its mount. It feels almost weightless in your hand.',
-                'Shield of Dusk added to your inventory.'
-            ],
-            'consequence_alternative': [
-                'You eat the Dragonlord\'s meal.',
-                'It\'s disappointingly bland.'
+                'The Dragonlord\'s arrogance in leaving this as decoration will be his downfall.',
+                '\nShield of Dusk added to your inventory.'
             ],
             'found': False,
         },
@@ -120,15 +108,16 @@ rooms = {
             'name': 'Potion of Cunning',
             'script': [
                 'Most of them are basic. But one catches your eye.',
-                'It gives off a strong magical aura.',
-                'Pick up the potion? Y/N'
+            ],
+            'investigation': [
+                'The potion in question shimmers in the light.',
+                'It is a light blue liquid, like gazing into a clear blue sky trapped in a bottle.'
             ],
             'consequence': [
-                'Potion of Cunning added to your inventory.'
+                'This might help you find what others hoped to remain hidden.',
+                '\nPotion of Cunning added to your inventory.'
             ],
-            'hidden': True,
             'found': False,
-            'post_script': True
         },
         'options': [
             'Search Potions'
@@ -145,25 +134,28 @@ rooms = {
             'A hatch in the corner on the floor leads to the Dungeons.',
             'Something about this room picks at your brain.'
         ],
+        'options': ['inspect ring'],
         'item': {
             'name': 'Ring of Protection',
             'script': [
                 'Sitting on the desk, you spot a dazzling silver ring.',
+            ],
+            'investigation': [
                 'Closer inspection reveals it to look remarkably similar to the fabled Ring of Protection.',
-                'Slip the ring onto your finger? Y/N'
+                'This ring, when worn, shields the wearer from physical harm.'
             ],
             'consequence': [
-                'The ring was trapped. Not all treasures are yours for the taking.',
-                'Your soul is trapped within the ring until the Dragonlord decides to free you from this fate.',
-                'GAME OVER'
+                'As you slide the ring onto your finger you realize your mistake.',
+                'The ring was a trap. Not all treasures are yours for the taking.',
+                '\nYour soul is trapped within the ring until the Dragonlord decides to free you from this fate.',
+                '\nGAME OVER'
             ],
             'found': False,
-            'post_script': True
         }
     },
     'Chambers': {
         'directions': {
-            'southwest': { 'name': 'Study', 'hidden': True },
+            'southwest': { 'name': 'Study', 'hidden': False },
             'south': { 'name': 'Villain\'s Lair', 'hidden': False }, 
         },
         'description': [
@@ -175,17 +167,23 @@ rooms = {
         'item': {
             'name': 'Orb of Wonders',
             'script': [
-                'Hovering above the nightstand and a sea-green orb the size of your fist.',
-                'It gives off astounding magical power, the kind capable of leveling cities.',
-                'you wonder if it is more power than any mortal should rightly possess.'
+                '\nHovering above the nightstand and a sea-green orb the size of your fist.',
+                '\nIt gives off astounding magical power, the kind capable of leveling cities.',
+                '\nYou wonder if it is more power than any mortal should rightly possess.',
+                '\nYou briefly wonder if you should destroy it, lest it lead you down a path you cannot turn back from.',
+                '\nBut to let such power go.........could it be a waste?'
             ],
-             'consequence': [
+            'investigation': [
+                'As you approach, the orb\'s light intensifies.'
+            ],
+            'consequence': [
                 'Holding the orb in your hand, you wonder if the Dragonlord is worthy of his power.',
+                'Perhaps someone more worthy should take his place',
                 'Orb of Wonders added to your inventory.'
             ],
             'consequence_alternative': [
                 'You understand that the Dragonlord was once a man.',
-                'A mere mortal such as yourself.',
+                'A mere mortal such as yourself who fell to the same darkness that entices all humankind.',
                 'Too much power, even in the hands of a hero, is a path to corruption.',
                 'You throw the orb against the wall, shattering it in a shower of arcane sparks.',
                 'Only a fragment is left behind. You hope it will be enough for the task that awaits.',
@@ -206,79 +204,124 @@ rooms = {
             'You wonder how many comrades have died here.',
         ],
         'options': [
-            'Search Cells'
+            'Search Cell'
         ],
         'item': {
             'name': 'Forgotten Letter',
             'script': [
-                'You spot a red stain on the wall ... you find a scrawled note so covered in blood that you can\'t read it.',
-                'All that you can make out from the writing is "I Love You"',
-                'Pick up the note? Y/N'
+                'You spot a red stain on the wall in one of the cells ... '
             ],
-            "post_script": True,
+            'investigation': [
+                'You hesitantly search the bloody cell.',
+                'Inside, you find a scrawled note hidden between cracks in the stone wall.',
+            ],
             'consequence': [
-                'You are filled with rage and fury the likes of which you have never known.',
+                'The note is so covered in dried blood that you can\'t read it.',
+                'All that you can make out from the writing is "I Love You"',
+                '\nUpon reading the message you are filled with rage and fury the likes of which you have never known.',
                 'It gives you purpose, and single-minded focus to tackle the challenge that lies in your future.',
-                'Forgotten Letter added to your inventory.'
+                '\nForgotten Letter added to your inventory.'
             ],
             'found': False,
-            'hidden': True
         }
     }
 }
 
-# 
-# TODO: if they have an item in inventory that matches the name in the item 
-# Category of the room, don't do the item description stuff
-
-# also, check if you have potion of cunning in inventory when entering study. if so, secret opens
-# 
-# Make sure that options can only be used in a room when they are valid. So you can't search statue anywhere
-# except for great hall
-# just check against current_options_list
-# 
-
-
 
 # options that should always be included as valid
 base_options = ['check map', 'rest', 'inventory', 'exit']
+
+# state-based variables
 current = 'Great Hall'
 current_options_list = list()
 inventory = list()
+potion_drank = False
+orb_status = ''
 
-def enterRoom(room_name):
-    global current_options_list
-    global current
-    current_options_list = list()
-    current = room_name
-    room_obj = rooms[current]
-    
-    print(f'You find yourself standing in the {current}./n')
-    
-    for desc in room_obj['description']:
-        print(desc)
+def enter_room(room_name):
+    if room_name == 'Villain\'s Lair':
+        final_stage()
+    if room_name == 'exit':
+        exit()
+    else:
+        global current_options_list
+        global current
+        global potion_drank
+        current_options_list = list()
+        current = room_name
+        room_obj = rooms[current]
+        
+        print(f'You find yourself standing in the {current}./n')
+        
+        for desc in room_obj['description']:
+            print(desc)
 
-    print()
+        print()
 
-    if 'item' in room_obj and room_obj['item']['found'] == False:
-        for line in room_obj['item']['script']:
-            print(line)
-    
-    for direction in room_obj['directions'].keys():
-        current_options_list.append(f'go {direction.lower()}')
-    
-    if 'options' in room_obj:
-        current_options_list = current_options_list + room_obj['options']
-    
-    # ensure base options always come last
-    current_options_list = current_options_list + base_options
+        if 'item' in room_obj and room_obj['item']['found'] == False:
+            for line in room_obj['item']['script']:
+                print(line)
+        
+        for direction in room_obj['directions'].keys():
+            if room_obj['directions'][direction]['hidden'] == False:
+                current_options_list.append(f'go {direction.lower()}')
+        
+        if 'options' in room_obj:
+            current_options_list = current_options_list + room_obj['options']
+        
+        # ensure base options always come last
+        current_options_list = current_options_list + base_options
 
-    # normalize list by lowercasing all items
-    current_options_list = [item.lower() for item in current_options_list]
-    print()
-    # display all valid options for the user
-    for idx, option in enumerate(current_options_list):
-        print(f'{idx + 1}) {option}')
+        # normalize list by lowercasing all items
+        current_options_list = [item.lower() for item in current_options_list]
+        print()
+
+        # display all valid options for the user
+        for idx, option in enumerate(current_options_list):
+            print(f'{idx + 1}) {option}')
+
+        if room_name == 'Study' and 'Potion of Cunning' in inventory and potion_drank == False:
+            drink_potion()
+
+
+def final_stage():
+    if len(inventory) < 6:
+        script = [
+            'The Dragonlord rises from his throne.',
+            'He stands head and shoulders taller than you, with armor black as night.',
+            'He laughs. "So you are the one who has been making all that noise."',
+            'You ready yourself to fight.',
+            'But with a flick of the Dragonlord\'s wrist, you are flung backwards.',
+            'Without the six items from the Dragonlord\'s keep you stand no chance against him.',
+            'GAME OVER'
+        ]
+    else:
+        script = [
+            'The mighty Dragonlord stands before you.',
+            'Noticing the legendary items he stole now on your person, his eyes widen in fear.',
+            'Realizing his mistake, he transforms into a mighty dragon and towers over you.',
+            'Undaunted, you raise your hand and with a powerful chant, magic flows through you.',
+            'Lightning arcs from your fingertips, smiting the Dragonlord in a single blow.',
+            'You have saved the day!',
+        ]
+
+        if orb_status == 'taken':
+            script = script + [
+                '...',
+                '...',
+                '...',
+                'The orb speaks to you.',
+                'Not with words, but with ideas.',
+                'With its power, you can reign supreme. You alone are worthy of the throne.',
+                'Thoughts of heroism and justice flee your mind.',
+                'A new age, with you at the helm, shall begin'
+            ]
+        script.append('!!!The End!!!')
+
+    for line in script:
+        print(f'\n {line}')
+    
+    sys.exit(0)
         
     
 def show_inventory():
@@ -294,8 +337,45 @@ def check_map(current_room):
     print('\nYou check your map. \n')
     print(f'Current Room: {current_room}')
     for direction, room in rooms[current_room]['directions'].items():
-        if 'hidden' not in room or room['hidden'] != True:
+        if room['hidden'] != True:
             print(f'{direction}: {room['name']}')
+
+def drink_potion():
+    global potion_drank
+    print('\nYou get the sense that you are missing something.')
+    print('\nPerhaps drinking some of that potion would help.')
+    response = ''
+    
+    while response.lower() not in ['y', 'n']:
+        response = input('\nDrink the Potion of Cunning? Y/N: ')
+    
+    if response.lower() == 'y':
+        print('\nYou drink some of the potion of cunning.'),
+        print('\nThe hidden path to the Dragonlord\'s Chambers appears.')
+        potion_drank = True
+        rooms['Study']['directions']['northeast']['hidden'] = False
+        current_options_list.insert(0, 'go northeast')
+    if response.lower() == 'n':
+        print('\nMaybe best to save it for now.')
+        current_options_list.append('drink potion')
+    
+    print()
+    for idx, option in enumerate(current_options_list):
+        print(f'{idx + 1}) {option}')
+
+# 
+# 
+# 
+# 
+# 
+# TODO find a way to combine these search functions so that you can just take the item data. 
+# Should be easier once you get them all written out
+# 
+# 
+# 
+# 
+# 
+# 
 
 def search_statue():
     print()
@@ -310,6 +390,7 @@ def search_statue():
     while response.lower() not in ['y', 'n']:
         response = input('\nPick up the sword? Y/N: ')
     
+    print()
     if response.lower() == 'y':
         for line in item['consequence']:
             print(line)
@@ -331,6 +412,7 @@ def search_bookshelves():
     while response.lower() not in ['y', 'n']:
         response = input('\nPick up the book? Y/N: ')
     
+    print()
     if response.lower() == 'y':
         for line in item['consequence']:
             print(line)
@@ -339,68 +421,237 @@ def search_bookshelves():
     if response.lower() == 'n':
         print('You leave the book where you found it')
 
+def search_potions():
+    print()
+    item = rooms['Kitchen']['item']
+    if item['found'] == True:
+        print('You have already found the Potion of Cunning. No other potions capture your interest.')
+        return
+    for line in item['investigation']:
+        print(line)
+    response = ''
 
-# current room for display and tracking purposes
+    while response.lower() not in ['y', 'n']:
+        response = input('\nPick up the potion? Y/N: ')
+    
+    print()
+    if response.lower() == 'y':
+        for line in item['consequence']:
+            print(line)
+        item['found'] = True
+        inventory.append(item['name'])
+    if response.lower() == 'n':
+        print('You leave the potion where you found it')
+
+def search_cell():
+    print()
+    item = rooms['Dungeons']['item']
+    if item['found'] == True:
+        print('You have the note in hand. You want to get out of here.')
+        return
+    for line in item['investigation']:
+        print(line)
+    response = ''
+
+    while response.lower() not in ['y', 'n']:
+        response = input('\nPick up the note? Y/N: ')
+    
+    print()
+    if response.lower() == 'y':
+        for line in item['consequence']:
+            print(line)
+        item['found'] = True
+        inventory.append(item['name'])
+    if response.lower() == 'n':
+        print('You leave the note where you found it')
+
+def take_shield():
+    print()
+    item = rooms['Dining Room']['item']
+    if item['found'] == True:
+        print('You have the shield already.')
+        return
+    for line in item['investigation']:
+        print(line)
+    response = ''
+
+    while response.lower() not in ['y', 'n']:
+        response = input('\nRemove the shield from the wall? Y/N: ')
+    
+    print()
+    if response.lower() == 'y':
+        for line in item['consequence']:
+            print(line)
+        item['found'] = True
+        inventory.append(item['name'])
+    if response.lower() == 'n':
+        print('You leave the shield where you found it')
+
+def inspect_ring():
+    print()
+    item = rooms['Study']['item']
+   
+    for line in item['investigation']:
+        print(line)
+    response = ''
+
+    while response.lower() not in ['y', 'n']:
+        response = input('\nSlip the ring onto your finger? Y/N: ')
+    
+    print()
+    if response.lower() == 'y':
+        for line in item['consequence']:
+            print(line)
+        return True
+    if response.lower() == 'n':
+        print('You leave the ring where you found it')
+
+def take_orb():
+    global orb_status
+    print()
+    item = rooms['Chambers']['item']
+    if item['found'] == True:
+        if orb_status == 'taken':
+            print('You have the orb in your possession already.')
+        if orb_status == 'broken':
+            print('You have the last fragment of the orb in your possession already.')
+        return
+    for line in item['investigation']:
+        print(line)
+    response = ''
+
+    while response.lower() not in ['y', 'n']:
+        response = input('\nTake the orb for yourself? Y/N: ')
+    
+    print()
+    if response.lower() == 'y':
+        for line in item['consequence']:
+            print(line)
+        item['found'] = True
+        orb_status = 'taken'
+        inventory.append(item['name'])
+    if response.lower() == 'n':
+        print('You leave the orb where you found it')
+
+
+def destroy_orb():
+    global orb_status
+    print()
+    item = rooms['Chambers']['item']
+    if item['found'] == True:
+        if orb_status == 'taken':
+            print('You have the orb in your possession already.')
+        if orb_status == 'broken':
+            print('You have the last fragment of the orb in your possession already.')
+        return
+    for line in item['investigation']:
+        print(line)
+    response = ''
+
+    while response.lower() not in ['y', 'n']:
+        response = input('\nDestroy the orb? Y/N: ')
+    
+    print()
+    if response.lower() == 'y':
+        for line in item['consequence_alternative']:
+            print(line)
+        item['found'] = True
+        orb_status = 'broken'
+        inventory.append('Fragment of Wonder')
+    if response.lower() == 'n':
+        print('You leave the orb where you found it')
+
+def exit():
+    print('\nDo not feel shame. Greater heroes than you have failed.')
+    print('\nPerhaps the next hero will be ... more.')
+    print('\nGAME OVER')
+    sys.exit(0)
 
 def main():
+    rest_counter = 0
+    meal_eaten = False
     # initialize in the Great Hall
-    enterRoom('Great Hall')
+    enter_room('Great Hall')
 
     while True:
         global current_options_list
         global current
-        command = input('\nWhat will you do next?: ')
+        command = input('\nWhat will you do next?: ').lower()
 
         # if command is not in the valid options list for the room, print invalid and give a new input prompt
-        if command.lower() not in current_options_list:
+        if command not in current_options_list:
             print('\n!!!Invalid command!!!')
-            continue
 
         # lowercase the command for simplicity and user's sake
-        if command.lower() == 'exit':
-            print('Do not feel shame. Greater heroes than you have failed. Perhaps the next hero will be ... more.', end='\n\n')
-            # end the loop
-            break
+        elif command == 'exit':
+            exit()
         
         # display inventory
-        if command.lower() == 'inventory':
+        elif command == 'inventory':
             show_inventory()
-            continue
 
         # lets the user check what the current and adjacent rooms are
-        if command.lower() == 'check map':
+        elif command == 'check map':
             check_map(current)
-            continue
 
-        if command.lower() == 'rest':
-            print('You look tired. Rest your weary head for a moment.')
+        elif command == 'rest':
+            rest_counter += 1
+            if rest_counter >= 3:
+                print('\nToo much time has been wasted.')
+                print('The Dragonlord has seen his evil plan to its end.')
+                print('\nGAME OVER')
+                break
+
+            print('\nYou look tired. Rest your weary head for a moment.')
             print('The world is dark, but here it is warm. If only for a moment.')
-            continue
+            
 
-        if command.lower() == 'search statue':
+        elif command == 'search statue':
             search_statue()
-            continue
         
-        if command.lower() == 'search bookshelves':
+        elif command == 'search bookshelves':
             search_bookshelves()
-            continue
-
-        # if the input doesn't match earlier commands, split on the space
-        separated = command.split(' ')
-
-        # change current room, using lower() to normalize the input to the rooms keys
-        room_name = rooms[current]['directions'][separated[1].lower()]['name']
-        # alert the user, change rooms, then restart the loop
-        print('\nMoving to a new room ...\n')
-        enterRoom(room_name)
         
+        elif command == 'search potions':
+            search_potions()
 
-        # if player enters the villain's lair, they win the game
-        if current == "Villain's Lair":
-            # TODO: implement checks to ensure the player has collected all necessary items to win the battle
-            # if they have all items, give them the room description
-            # otherwise give them the failure description
-            # end the program upon victory
-            break
+        elif command == 'search cell':
+            search_cell()
+        
+        elif command == 'take shield':
+            take_shield()
+        
+        elif command == 'take orb':
+            take_orb()
+
+        elif command == 'destroy orb':
+            destroy_orb()
+
+        elif command == 'inspect ring':
+            game_over = inspect_ring()
+            if game_over:
+                break
+        
+        elif command == 'eat meal':
+            print()
+            if meal_eaten == False:
+                print('You eat the Dragonlord\'s meal.')
+                print('It\'s disappointingly bland.')
+                meal_eaten = True
+            else:
+                print('The plates at the table are empty.')
+        
+        elif command == 'drink potion':
+            drink_potion()
+        
+        else:
+            # if the input doesn't match earlier commands, split on the space
+            separated = command.split(' ')
+
+            # change current room
+            room_name = rooms[current]['directions'][separated[1].lower()]['name']
+            # alert the user, change rooms, then restart the loop in the new room
+            print('\nMoving to a new room ...\n')
+            enter_room(room_name)
 
 main()
