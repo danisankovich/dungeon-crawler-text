@@ -236,6 +236,7 @@ rooms = {
 base_options = ['check map', 'rest', 'inventory', 'exit']
 current = 'Great Hall'
 current_options_list = list()
+inventory = list()
 
 def enterRoom(room_name):
     current_options_list = list()
@@ -248,7 +249,7 @@ def enterRoom(room_name):
 
     print()
 
-    if 'item' in room_obj:
+    if 'item' in room_obj and 'found' not in room_obj['item']:
         for line in room_obj['item']['script']:
             print(line)
     
@@ -265,6 +266,8 @@ def enterRoom(room_name):
     for idx, option in enumerate(current_options_list):
         print(f'{idx + 1}) {option}')
     
+def show_inventory():
+    print(inventory)
 
 def library():
     enterRoom('Library')
