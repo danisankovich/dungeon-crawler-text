@@ -30,6 +30,11 @@ rooms = {
                 '\nSword of the Morning added to your inventory.',
             ],
             'found': False,
+            'interaction': {
+                'already_found': 'The statue\'s hand is empty. You have already found the sword',
+                'prompt': '\nPick up the sword? Y/N: ',
+                'leave_item': 'You leave the sword where you found it'
+            }
         },
         'options': [
             'Search Statue'
@@ -57,6 +62,11 @@ rooms = {
                 '\nTome of Forgotten Magiks added to your inventory.',
             ],
             'found': False,
+            'interaction': {
+                'already_found': 'Now that the book is in your possession, you do not sense any other tomes worth mentioning.',
+                'prompt': '\nPick up the book? Y/N: ',
+                'leave_item': 'You leave the book where you found it'
+            }
         },
         'options': [
             'Search Bookshelves'
@@ -89,6 +99,11 @@ rooms = {
                 '\nShield of Dusk added to your inventory.'
             ],
             'found': False,
+            'interaction': {
+                'already_found': 'You have the shield already.',
+                'prompt': '\nRemove the shield from the wall? Y/N: ',
+                'leave_item': 'You leave the shield where you found it'
+            }
         },
         'options': [
             'Take Shield',
@@ -118,6 +133,11 @@ rooms = {
                 '\nPotion of Cunning added to your inventory.'
             ],
             'found': False,
+            'interaction': {
+                'already_found': 'You have already found the Potion of Cunning. No other potions capture your interest.',
+                'prompt': '\nPick up the potion? Y/N: ',
+                'leave_item': 'You leave the potion where you found it'
+            }
         },
         'options': [
             'Search Potions'
@@ -151,6 +171,11 @@ rooms = {
                 '\nGAME OVER'
             ],
             'found': False,
+            'interaction': {
+                'already_found': 'Now that the book is in your possession, you do not sense any other tomes worth mentioning.',
+                'prompt': '\nPick up the book? Y/N: ',
+                'leave_item': 'You leave the book where you found it'
+            }
         }
     },
     'Chambers': {
@@ -190,6 +215,11 @@ rooms = {
                 'Fragment of Wonder added to your inventory.'
             ],
             'found': False,
+            'interaction': {
+                'already_found': 'Now that the book is in your possession, you do not sense any other tomes worth mentioning.',
+                'prompt': '\nPick up the book? Y/N: ',
+                'leave_item': 'You leave the book where you found it'
+            }
         },
         'options': [
             'Take Orb', 'Destroy Orb'
@@ -223,10 +253,14 @@ rooms = {
                 '\nForgotten Letter added to your inventory.'
             ],
             'found': False,
+            'interaction': {
+                'already_found': 'You have the note in hand. You want to get out of here.',
+                'prompt': '\nPick up the note? Y/N: ',
+                'leave_item': 'You leave the note where you found it'
+            }
         }
     }
 }
-
 
 # options that should always be included as valid
 base_options = ['check map', 'rest', 'inventory', 'exit']
@@ -322,9 +356,9 @@ def final_stage():
 
     for line in script:
         print(f'\n {line}')
-    
+
     sys.exit(0)
-        
+
 # display the players inventory
 def show_inventory():
     global inventory
@@ -340,8 +374,8 @@ def check_map(current_room):
     print('\nYou check your map. \n')
     print(f'Current Room: {current_room}')
     for direction, room in rooms[current_room]['directions'].items():
-        if room['hidden'] != True:
-            print(f'{direction}: {room['name']}')
+        if room['hidden'] is not True:
+            print(f'{direction}: {room["name"]}')
 
 # function for handling drinking of a specific potion in inventory to access the secret room
 def drink_potion():
@@ -349,7 +383,7 @@ def drink_potion():
     print('\nYou get the sense that you are missing something.')
     print('\nPerhaps drinking some of that potion would help.')
     response = ''
-    
+
     while response.lower() not in ['y', 'n']:
         response = input('\nDrink the Potion of Cunning? Y/N: ')
     
@@ -363,39 +397,26 @@ def drink_potion():
     if response.lower() == 'n':
         print('\nMaybe best to save it for now.')
         current_options_list.append('drink potion')
-    
+
     # show the options list again since it may have been updated
     print()
     for idx, option in enumerate(current_options_list):
         print(f'{idx + 1}) {option}')
 
-# 
-# 
-# 
-# 
-# 
-# TODO find a way to combine these search functions so that you can just take the item data. 
-# Should be easier once you get them all written out
-# 
-# 
-# Comment them all
-# 
-# 
-# 
-
-def search_statue():
+# search room, data dynamically set based on the room searched
+def search(room_name):
     print()
-    item = rooms['Great Hall']['item']
+    item = rooms[room_name]['item']
     if item['found'] == True:
-        print('The statue\'s hand is empty. You have already found the sword')
+        print(item['interaction']['already_found'])
         return
     for line in item['investigation']:
         print(line)
     response = ''
 
     while response.lower() not in ['y', 'n']:
-        response = input('\nPick up the sword? Y/N: ')
-    
+        response = input(item['interaction']['prompt'])
+
     print()
     if response.lower() == 'y':
         for line in item['consequence']:
@@ -403,95 +424,7 @@ def search_statue():
         item['found'] = True
         inventory.append(item['name'])
     if response.lower() == 'n':
-        print('You leave the sword where you found it')
-
-def search_bookshelves():
-    print()
-    item = rooms['Library']['item']
-    if item['found'] == True:
-        print('Now that the book is in your possession, you do not sense any other tomes worth mentioning.')
-        return
-    for line in item['investigation']:
-        print(line)
-    response = ''
-
-    while response.lower() not in ['y', 'n']:
-        response = input('\nPick up the book? Y/N: ')
-    
-    print()
-    if response.lower() == 'y':
-        for line in item['consequence']:
-            print(line)
-        item['found'] = True
-        inventory.append(item['name'])
-    if response.lower() == 'n':
-        print('You leave the book where you found it')
-
-def search_potions():
-    print()
-    item = rooms['Kitchen']['item']
-    if item['found'] == True:
-        print('You have already found the Potion of Cunning. No other potions capture your interest.')
-        return
-    for line in item['investigation']:
-        print(line)
-    response = ''
-
-    while response.lower() not in ['y', 'n']:
-        response = input('\nPick up the potion? Y/N: ')
-    
-    print()
-    if response.lower() == 'y':
-        for line in item['consequence']:
-            print(line)
-        item['found'] = True
-        inventory.append(item['name'])
-    if response.lower() == 'n':
-        print('You leave the potion where you found it')
-
-def search_cell():
-    print()
-    item = rooms['Dungeons']['item']
-    if item['found'] == True:
-        print('You have the note in hand. You want to get out of here.')
-        return
-    for line in item['investigation']:
-        print(line)
-    response = ''
-
-    while response.lower() not in ['y', 'n']:
-        response = input('\nPick up the note? Y/N: ')
-    
-    print()
-    if response.lower() == 'y':
-        for line in item['consequence']:
-            print(line)
-        item['found'] = True
-        inventory.append(item['name'])
-    if response.lower() == 'n':
-        print('You leave the note where you found it')
-
-def take_shield():
-    print()
-    item = rooms['Dining Room']['item']
-    if item['found'] == True:
-        print('You have the shield already.')
-        return
-    for line in item['investigation']:
-        print(line)
-    response = ''
-
-    while response.lower() not in ['y', 'n']:
-        response = input('\nRemove the shield from the wall? Y/N: ')
-    
-    print()
-    if response.lower() == 'y':
-        for line in item['consequence']:
-            print(line)
-        item['found'] = True
-        inventory.append(item['name'])
-    if response.lower() == 'n':
-        print('You leave the shield where you found it')
+        print(item['interaction']['leave_item'])
 
 # a trap for unwary players, which can lead to a game over.
 # In the future, maybe implement a dice roll system to determine if they spot the trap
@@ -506,7 +439,7 @@ def inspect_ring():
 
     while response.lower() not in ['y', 'n']:
         response = input('\nSlip the ring onto your finger? Y/N: ')
-    
+
     print()
     if response.lower() == 'y':
         for line in item['consequence']:
@@ -550,9 +483,9 @@ def destroy_orb():
     item = rooms['Chambers']['item']
     if item['found'] == True:
         if orb_status == 'taken':
-            print('You have the orb in your possession already.')
+            print('You have the orb in your possession already.....you can\'t bring yourself to break it.')
         if orb_status == 'broken':
-            print('You have the last fragment of the orb in your possession already.')
+            print('You have a fragment of the orb in your possession already.')
         return
     for line in item['investigation']:
         print(line)
@@ -560,7 +493,7 @@ def destroy_orb():
 
     while response.lower() not in ['y', 'n']:
         response = input('\nDestroy the orb? Y/N: ')
-    
+
     print()
     if response.lower() == 'y':
         for line in item['consequence_alternative']:
@@ -587,6 +520,8 @@ def main():
     print('Brave hero, travel through his castle and seek out the legendary treasures he has stolen.')
     print('Turn those 6 powerful artifacts against him and save the world.')
     print('But be warned. Fail to collect the 6 artifacts, and you will surely fail.')
+    print('\n You will be shown a list of available commands in each room.')
+    print('Enter them to progress through the game.')
 
     # initialize in the Great Hall
     enter_room('Great Hall')
@@ -624,23 +559,10 @@ def main():
 
             print('\nYou look tired. Rest your weary head for a moment.')
             print('The world is dark, but here it is warm. If only for a moment.')
-            
 
-        # START room-specific command functions: the various functions that can take place only in specific rooms
-        elif command == 'search statue':
-            search_statue()
-        
-        elif command == 'search bookshelves':
-            search_bookshelves()
-        
-        elif command == 'search potions':
-            search_potions()
-
-        elif command == 'search cell':
-            search_cell()
-        
-        elif command == 'take shield':
-            take_shield()
+        # various rooms use the same format for searching/retrieving items from various rooms
+        elif command in ['search statue', 'search bookshelves', 'search potions', 'search cell', 'take shield']:
+            search(current)
         
         elif command == 'take orb':
             take_orb()
@@ -659,13 +581,13 @@ def main():
                 meal_eaten = True
             else:
                 print('The plates at the table are empty.')
-        
+
         elif command == 'drink potion':
             drink_potion()
         # END room-specific command functions
-        
+
         else:
-            # if the input doesn't match earlier commands, split on the space
+            # if the input doesn't match earlier commands, split on the space, since it will be directional
             separated = command.split(' ')
 
             # change current room
